@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<title>AI Video Editor</title>
+<style>
+:root{--bg:#070b14;--panel:#0d1424;--panel2:#111a2d;--line:#26324a;--text:#edf3ff;--muted:#91a0ba;--accent:#5b8cff;--accent2:#7b61ff;--good:#38d39f;--warn:#ffca5c;--danger:#ff6b7a;--r:14px;--shadow:0 14px 40px rgba(0,0,0,.28)}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(1200px 700px at 60% -10%,#182341 0%,transparent 55%),var(--bg);color:var(--text);overflow:hidden}
+button,input,select,textarea{font:inherit}button{border:1px solid var(--line);background:#121a2c;color:var(--text);border-radius:10px;padding:9px 12px;cursor:pointer}button:hover{border-color:#3c4c6e;background:#17223a}.primary{border:0;background:linear-gradient(135deg,var(--accent),var(--accent2));font-weight:700}.ghost{background:transparent}.danger{background:#24141a;border-color:#5c2530;color:#ffb8c1}.icon{width:38px;height:38px;padding:0;display:grid;place-items:center}.tiny{font-size:12px}.muted{color:var(--muted)}
+.app{height:100%;display:grid;grid-template-rows:58px 1fr 42px}.topbar{display:flex;align-items:center;gap:14px;padding:0 14px;border-bottom:1px solid var(--line);background:rgba(7,11,20,.88);backdrop-filter:blur(14px);z-index:5}.brand{font-weight:800;letter-spacing:.3px;font-size:17px;white-space:nowrap}.brand span{color:#89a9ff}.top-actions{margin-left:auto;display:flex;gap:8px;align-items:center}.lang{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}.lang button{border:0;border-radius:0;background:transparent;padding:8px 10px}.lang button.active{background:#1d2b4b;color:#fff}
+.workspace{min-height:0;display:grid;grid-template-columns:250px minmax(0,1fr) 280px;gap:1px;background:var(--line)}.sidebar,.inspector,.center{min-width:0;min-height:0;background:var(--panel)}.sidebar{display:flex;flex-direction:column}.center{display:grid;grid-template-rows:minmax(0,1fr) 42%;min-height:0}.inspector{overflow:auto}
+.section-title{padding:14px 14px 8px;font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:#8fa1bf}.side-scroll{overflow:auto;padding:0 10px 12px}.media-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 10px 10px}.media-tabs button{padding:8px 4px;font-size:12px}.media-tabs button.active{border-color:#506da8;background:#162543}.media-list{display:flex;flex-direction:column;gap:8px}.media-item{padding:10px;border:1px solid var(--line);background:var(--panel2);border-radius:10px;display:flex;gap:9px;align-items:center}.thumb{width:44px;height:32px;border-radius:7px;background:#1a2640;display:grid;place-items:center;overflow:hidden;flex:none}.thumb video,.thumb img{width:100%;height:100%;object-fit:cover}.media-info{min-width:0}.media-name{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.media-meta{font-size:10px;color:var(--muted);margin-top:2px}.side-bottom{margin-top:auto;padding:10px;border-top:1px solid var(--line);display:grid;gap:7px}.storage{border:1px solid var(--line);background:#0a1120;padding:10px;border-radius:10px}.storage-row{display:flex;justify-content:space-between;font-size:11px}.bar{height:6px;background:#1a2438;border-radius:99px;margin-top:7px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.preview-zone{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;background:linear-gradient(180deg,#0a101c,#070b14)}.preview-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--line)}.preview-actions{display:flex;gap:6px}.preview-stage{min-height:0;display:grid;place-items:center;padding:14px}.stage{position:relative;max-width:100%;max-height:100%;aspect-ratio:16/9;width:min(100%,860px);background:#02040a;border:1px solid #1c2840;border-radius:12px;box-shadow:var(--shadow);overflow:hidden}.stage video{width:100%;height:100%;object-fit:contain;background:#000}.empty-stage{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:30px}.empty-stage div{max-width:430px}.empty-stage h2{margin:0 0 8px;font-size:22px}.overlay-text{position:absolute;left:50%;top:82%;transform:translate(-50%,-50%);font-weight:800;font-size:clamp(18px,3vw,36px);text-align:center;text-shadow:0 3px 15px #000;display:none;pointer-events:none;white-space:pre-wrap}.controls{display:flex;align-items:center;gap:9px;padding:9px 12px;border-top:1px solid var(--line)}.play{width:40px;height:40px;border-radius:50%}.progress{flex:1}.time{font-variant-numeric:tabular-nums;font-size:12px;min-width:92px;text-align:right}.timeline{min-height:0;background:#0a101a;border-top:1px solid var(--line);display:grid;grid-template-rows:42px minmax(0,1fr)}.timeline-head{display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid var(--line)}.ruler-wrap{position:relative;flex:1;height:28px;overflow:hidden}.ruler{position:absolute;inset:0;display:flex;align-items:flex-end;gap:0;color:#64738d;font-size:10px}.tick{width:80px;border-left:1px solid #253149;height:12px;padding-left:3px}.tracks{overflow:auto;padding:6px 10px 16px}.track{display:grid;grid-template-columns:90px minmax(800px,1fr);min-height:54px;border-bottom:1px solid #182238}.track-label{padding:9px 8px;color:#9eb0ca;font-size:11px;position:sticky;left:0;background:#0a101a;z-index:1}.lane{position:relative;min-height:44px;background:repeating-linear-gradient(90deg,transparent 0 79px,#18233a 80px),#0d1422;border-radius:8px;overflow:hidden}.clip{position:absolute;top:5px;height:34px;border-radius:8px;border:1px solid #526fae;background:linear-gradient(135deg,#274273,#3f4f8c);display:flex;align-items:center;padding:0 8px;gap:6px;font-size:11px;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.clip.audio{background:linear-gradient(135deg,#1d5b4f,#337c71);border-color:#3a9d8b}.clip.caption{background:linear-gradient(135deg,#6a4a22,#8b6230);border-color:#c08c45}.clip.selected{outline:2px solid #9ab8ff;box-shadow:0 0 0 3px rgba(91,140,255,.16)}
+.inspector{padding:0 12px 20px}.card{border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:11px;margin-bottom:10px}.card h3{font-size:12px;margin:0 0 10px;color:#b5c4dd}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.field{display:grid;gap:5px;margin-bottom:9px}.field label{font-size:10px;color:#92a0b8;text-transform:uppercase;letter-spacing:.08em}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:#0a1120;color:var(--text);border-radius:9px;padding:9px;outline:none}.field textarea{resize:vertical;min-height:78px}.range{display:flex;gap:7px;align-items:center}.range input{padding:0;border:0}.range span{font-size:11px;color:#a6b5cb;min-width:46px;text-align:right}.checkbox{display:flex;align-items:center;gap:7px;font-size:11px;color:#b9c6d9}.inspector-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ai{border-top:1px solid var(--line);padding:10px;background:#0b1220}.ai-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}.ai-title{font-size:12px;font-weight:800}.ai-chip{font-size:10px;border:1px solid #344668;padding:4px 7px;border-radius:999px;color:#a4bcff;background:#111d35}.ai-box{display:flex;gap:7px}.ai-box textarea{flex:1;min-height:58px;background:#080e19;border:1px solid var(--line);color:#fff;border-radius:10px;padding:9px;resize:none}.ai-output{margin-top:7px;font-size:11px;color:#aebbd0;max-height:74px;overflow:auto;white-space:pre-wrap}.status{display:flex;align-items:center;gap:10px;padding:0 14px;border-top:1px solid var(--line);color:#8f9db5;font-size:11px;background:#070c15}.dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 10px rgba(56,211,159,.7)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.66);display:none;align-items:center;justify-content:center;z-index:30;padding:18px}.modal.open{display:flex}.modal-card{width:min(720px,100%);max-height:90vh;overflow:auto;background:#0c1423;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);padding:16px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.modal-head h2{font-size:17px;margin:0}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.log{background:#050a12;border:1px solid var(--line);border-radius:10px;padding:9px;font:11px ui-monospace,SFMono-Regular,monospace;max-height:180px;overflow:auto;white-space:pre-wrap}
+@media(max-width:1000px){body{overflow:auto}.app{min-height:100%;height:auto;grid-template-rows:58px auto 42px}.workspace{grid-template-columns:1fr;min-height:calc(100vh - 100px)}.sidebar,.inspector{max-height:420px}.center{min-height:780px;order:-1}.workspace{display:flex;flex-direction:column}.top-actions .desktop-only{display:none}.track{grid-template-columns:76px minmax(720px,1fr)}.ai{position:sticky;bottom:0}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">AI <span>VIDEO</span> EDITOR</div>
+    <button class="ghost tiny" id="newBtn">New</button>
+    <button class="ghost tiny" id="saveBtn">Save</button>
+    <button class="ghost tiny" id="loadBtn">Load</button>
+    <div class="top-actions">
+      <div class="lang" aria-label="Language">
+        <button id="langEn" class="active">English</button>
+        <button id="langHi">हिन्दी</button>
+      </div>
+      <button class="icon" id="settingsBtn" title="Settings">⚙</button>
+      <button class="primary" id="renderBtn">Render → Export</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="sidebar">
+      <div class="section-title" data-i18n="media">Media</div>
+      <div class="media-tabs">
+        <button class="active" data-tab="all">All</button><button data-tab="video">Video</button><button data-tab="audio">Audio</button>
+      </div>
+      <div class="side-scroll">
+        <div class="media-list" id="mediaList"></div>
+      </div>
+      <div class="side-bottom">
+        <button class="primary" id="importBtn">＋ Import Media</button>
+        <input id="fileInput" type="file" hidden multiple accept="video/*,audio/*,image/*">
+        <div class="storage"><div class="storage-row"><span data-i18n="workingStorage">Working storage</span><b id="storageText">0 GB / 50 GB</b></div><div class="bar"><i id="storageBar"></i></div></div>
+      </div>
+    </aside>
+
+    <section class="center">
+      <div class="preview-zone">
+        <div class="preview-head"><b data-i18n="preview">Preview</b><div class="preview-actions"><button class="tiny" id="fitBtn">Fit</button><button class="tiny" id="fullscreenBtn">⛶</button></div></div>
+        <div class="preview-stage">
+          <div class="stage" id="stage">
+            <video id="preview" playsinline controls></video>
+            <div class="empty-stage" id="emptyStage"><div><h2 data-i18n="dropTitle">Import a video to start</h2><p class="muted" data-i18n="dropText">AI can analyze scenes, plan edits, place captions/SFX, and you can fine-tune everything manually.</p><button class="primary" id="importHero" data-i18n="import">Import Media</button></div></div>
+            <div class="overlay-text" id="overlayText"></div>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="play" id="playBtn">▶</button><button class="icon" id="backBtn">⏮</button><button class="icon" id="forwardBtn">⏭</button>
+          <input class="progress" id="scrub" type="range" min="0" max="0" step="0.01" value="0">
+          <div class="time" id="timeText">00:00 / 00:00</div>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-head"><b data-i18n="timeline">Timeline</b><button class="tiny" id="splitBtn">Split</button><button class="tiny" id="deleteBtn">Delete</button><button class="tiny" id="dupBtn">Duplicate</button><div class="ruler-wrap"><div class="ruler" id="ruler"></div></div></div>
+        <div class="tracks" id="tracks"></div>
+      </div>
+
+      <div class="ai">
+        <div class="ai-head"><div class="ai-title">🤖 <span data-i18n="aiAssistant">AI Assistant</span></div><div class="ai-chip" data-i18n="languages">English + Hindi + Hinglish</div></div>
+        <div class="ai-box"><textarea id="aiPrompt" placeholder="Describe the edit… e.g. make it faster, add subtle SFX, captions, and cinematic zooms."></textarea><button class="primary" id="aiRun" data-i18n="applyAI">Apply AI</button></div>
+        <div class="ai-output" id="aiOutput"></div>
+      </div>
+    </section>
+
+    <aside class="inspector">
+      <div class="section-title" data-i18n="inspector">Inspector</div>
+      <div class="card">
+        <h3 data-i18n="clipProperties">Clip Properties</h3>
+        <div class="field"><label data-i18n="selectedClip">Selected clip</label><input id="selectedName" disabled value="—"></div>
+        <div class="row"><div class="field"><label>Start</label><input id="clipStart" type="number" min="0" step="0.1"></div><div class="field"><label>End</label><input id="clipEnd" type="number" min="0" step="0.1"></div></div>
+        <div class="field"><label data-i18n="speed">Speed</label><div class="range"><input id="speed" type="range" min="0.25" max="2" step="0.05" value="1"><span id="speedVal">1.00x</span></div></div>
+        <div class="field"><label data-i18n="volume">Volume</label><div class="range"><input id="volume" type="range" min="0" max="1.5" step="0.01" value="1"><span id="volumeVal">100%</span></div></div>
+        <div class="row"><div class="field"><label data-i18n="zoom">Zoom</label><input id="zoom" type="number" min="0.5" max="2" step="0.01" value="1"></div><div class="field"><label data-i18n="pan">Pan X</label><input id="panX" type="number" min="-100" max="100" step="1" value="0"></div></div>
+        <div class="field"><label data-i18n="captionText">Caption / Text overlay</label><textarea id="captionText" placeholder="Optional text overlay"></textarea></div>
+        <div class="checkbox"><input id="showCaption" type="checkbox"><span data-i18n="showCaption">Show text overlay</span></div>
+        <div class="inspector-actions"><button id="undoBtn">↶ Undo</button><button id="redoBtn">↷ Redo</button></div>
+      </div>
+      <div class="card">
+        <h3 data-i18n="project">Project</h3>
+        <div class="row"><div class="field"><label>Resolution</label><select id="resolution"><option>1280x720</option><option selected>1920x1080</option></select></div><div class="field"><label>FPS</label><select id="fps"><option>24</option><option selected>30</option><option>60</option></select></div></div>
+        <div class="field"><label data-i18n="quality">Quality</label><select id="quality"><option>Standard</option><option selected>High</option><option>Maximum</option></select></div>
+        <div class="checkbox"><input id="maxDurationCheck" checked type="checkbox"><span data-i18n="maxDuration">Enforce 1-hour project limit</span></div>
+      </div>
+      <div class="card">
+        <h3 data-i18n="backend">Backend</h3>
+        <div class="field"><label>API / Gradio URL</label><input id="backendUrl" placeholder="https://your-backend.example.com"></div>
+        <div class="muted tiny" data-i18n="backendNote">Heavy AI analysis/rendering should run on a persistent backend. Colab runtime disconnects can stop a temporary Gradio server.</div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="status"><span class="dot"></span><span id="statusText" data-i18n="ready">Ready • Frontend mode</span><span class="muted" id="projectInfo"></span></footer>
+</div>
+
+<div class="modal" id="settingsModal"><div class="modal-card"><div class="modal-head"><h2 data-i18n="settings">Settings</h2><button id="closeSettings">✕</button></div><div class="grid2"><div class="field"><label>Backend URL</label><input id="backendUrl2"></div><div class="field"><label data-i18n="languageMode">Language</label><select id="languageMode"><option value="en">English</option><option value="hi">हिन्दी</option></select></div></div><div class="field"><label data-i18n="logs">Activity log</label><div class="log" id="logBox"></div></div><div style="display:flex;gap:7px;justify-content:flex-end"><button id="clearLogs" data-i18n="clear">Clear</button><button class="primary" id="saveSettings" data-i18n="save">Save</button></div></div></div>
+
+<script>
+(() => {
+  'use strict';
+  const MAX_GB=50, MAX_SEC=3600;
+  const $=id=>document.getElementById(id);
+  const state={
+    language:localStorage.getItem('ave_language')||'en',
+    backendUrl:localStorage.getItem('ave_backend')||'',
+    media:[], clips:[], selectedClipId:null,
+    history:[], future:[], filter:'all',
+    project:{name:'AI Video Editor',version:'1.0',resolution:'1920x1080',fps:30,quality:'High'}
+  };
+  const i18n={
+    en:{media:'Media',workingStorage:'Working storage',preview:'Preview',dropTitle:'Import a video to start',dropText:'AI can analyze scenes, plan edits, place captions/SFX, and you can fine-tune everything manually.',import:'Import Media',timeline:'Timeline',aiAssistant:'AI Assistant',languages:'English + Hindi + Hinglish',applyAI:'Apply AI',inspector:'Inspector',clipProperties:'Clip Properties',selectedClip:'Selected clip',speed:'Speed',volume:'Volume',zoom:'Zoom',pan:'Pan X',captionText:'Caption / Text overlay',showCaption:'Show text overlay',project:'Project',quality:'Quality',maxDuration:'Enforce 1-hour project limit',backend:'Backend',backendNote:'Heavy AI analysis/rendering should run on a persistent backend. Colab runtime disconnects can stop a temporary Gradio server.',ready:'Ready • Frontend mode',settings:'Settings',languageMode:'Language',logs:'Activity log',clear:'Clear',save:'Save'},
+    hi:{media:'मीडिया',workingStorage:'वर्किंग स्टोरेज',preview:'प्रीव्यू',dropTitle:'शुरू करने के लिए वीडियो इम्पोर्ट करें',dropText:'AI scene analysis, edit plan, captions/SFX और manual fine-tuning दे सकता है।',import:'मीडिया इम्पोर्ट',timeline:'टाइमलाइन',aiAssistant:'AI असिस्टेंट',languages:'English + Hindi + Hinglish',applyAI:'AI लागू करें',inspector:'इंस्पेक्टर',clipProperties:'क्लिप प्रॉपर्टीज',selectedClip:'चुनी हुई क्लिप',speed:'स्पीड',volume:'वॉल्यूम',zoom:'ज़ूम',pan:'पैन X',captionText:'कैप्शन / टेक्स्ट ओवरले',showCaption:'टेक्स्ट ओवरले दिखाएँ',project:'प्रोजेक्ट',quality:'क्वालिटी',maxDuration:'1 घंटे की प्रोजेक्ट सीमा लागू करें',backend:'बैकएंड',backendNote:'Heavy AI analysis/rendering persistent backend पर चलना चाहिए। Colab runtime disconnect होने पर temporary Gradio server रुक सकता है।',ready:'तैयार • फ्रंटएंड मोड',settings:'सेटिंग्स',languageMode:'भाषा',logs:'Activity log',clear:'साफ करें',save:'सेव'}
+  };
+  const log=(msg)=>{const s=new Date().toLocaleTimeString(); const txt=`[${s}] ${msg}`; const arr=(localStorage.getItem('ave_logs')||'').split('\n').filter(Boolean); arr.push(txt); localStorage.setItem('ave_logs',arr.slice(-100).join('\n')); $('logBox').textContent=arr.slice(-100).join('\n'); console.log(txt)};
+  const setStatus=t=>{$('statusText').textContent=t};
+  const fmtSec=s=>{s=Math.max(0,Number(s)||0); const m=Math.floor(s/60); const ss=Math.floor(s%60); return `${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`};
+  const uid=()=>Math.random().toString(36).slice(2)+Date.now().toString(36);
+  function applyLanguage(){
+    document.documentElement.lang=state.language;
+    document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(i18n[state.language][k])el.textContent=i18n[state.language][k]});
+    $('langEn').classList.toggle('active',state.language==='en');$('langHi').classList.toggle('active',state.language==='hi');
+    localStorage.setItem('ave_language',state.language);
+  }
+  function snapshot(){return JSON.stringify({media:state.media.map(m=>({...m,src:undefined,url:undefined})),clips:state.clips,project:state.project})}
+  function pushHistory(){state.history.push(snapshot());if(state.history.length>30)state.history.shift();state.future=[]}
+  function restoreSnap(s){try{const o=JSON.parse(s);state.clips=o.clips||[];state.project={...state.project,...(o.project||{})};renderAll()}catch(e){log('Restore failed: '+e.message)}}
+  function mediaType(file){if(file.type.startsWith('video/'))return'video';if(file.type.startsWith('audio/'))return'audio';if(file.type.startsWith('image/'))return'photo';return'unknown'}
+  function secondsFromMedia(m){return Number(m.duration)||0}
+  function totalStoredBytes(){return state.media.reduce((a,m)=>a+(m.size||0),0)}
+  function updateStorage(){const gb=totalStoredBytes()/1073741824; $('storageText').textContent=`${gb.toFixed(3)} GB / ${MAX_GB} GB`; $('storageBar').style.width=Math.min(100,gb/MAX_GB*100)+'%'}
+  function currentProjectDuration(){return state.clips.reduce((a,c)=>a+Math.max(0,c.end-c.start)/Math.max(.01,c.speed||1),0)}
+  function addMedia(file){
+    const used=totalStoredBytes(), next=used+file.size;
+    if(next>MAX_GB*1073741824){setStatus('Storage limit exceeded');alert('50 GB working-storage limit reached.');return}
+    const type=mediaType(file); if(type==='unknown'){return}
+    const id=uid(); const url=URL.createObjectURL(file);
+    const m={id,name:file.name,type,size:file.size,mime:file.type,url,duration:0,width:0,height:0,fps:0};
+    state.media.push(m);
+    if(type==='video'){
+      const v=document.createElement('video');v.preload='metadata';v.src=url;v.onloadedmetadata=()=>{m.duration=Number.isFinite(v.duration)?v.duration:0;m.width=v.videoWidth;m.height=v.videoHeight;m.fps=30;renderMedia();renderTimeline();updateStorage();saveProjectLocal();};
+    }else if(type==='audio'){
+      const a=document.createElement('audio');a.preload='metadata';a.src=url;a.onloadedmetadata=()=>{m.duration=Number.isFinite(a.duration)?a.duration:0;renderMedia();};
+    }else {m.duration=5}
+    pushHistory(); log('Imported '+file.name);
+    renderMedia();updateStorage();
+  }
+  function renderMedia(){
+    const list=$('mediaList');list.innerHTML='';
+    state.media.filter(m=>state.filter==='all'||(state.filter==='video'&&m.type==='video')||(state.filter==='audio'&&m.type==='audio')).forEach(m=>{
+      const item=document.createElement('div');item.className='media-item';item.draggable=true;item.dataset.id=m.id;
+      const th=document.createElement('div');th.className='thumb';
+      if(m.type==='video'){const v=document.createElement('video');v.src=m.url;v.muted=true;v.preload='metadata';th.appendChild(v)} else th.textContent=m.type==='audio'?'♪':'IMG';
+      const info=document.createElement('div');info.className='media-info';info.innerHTML=`<div class="media-name" title="${escapeHtml(m.name)}">${escapeHtml(m.name)}</div><div class="media-meta">${m.type.toUpperCase()} • ${m.duration?fmtSec(m.duration):'loading…'}</div>`;
+      item.append(th,info);item.onclick=()=>addClipToTimeline(m.id);item.addEventListener('dragstart',e=>e.dataTransfer.setData('text/media-id',m.id));list.appendChild(item);
+    });
+  }
+  function addClipToTimeline(mid){
+    const m=state.media.find(x=>x.id===mid);if(!m)return;
+    const dur=Math.min(secondsFromMedia(m)||5,MAX_SEC);const start=state.clips.filter(c=>c.track==='Video 1').reduce((a,c)=>Math.max(a,c.timelineStart+(c.end-c.start)/c.speed),0);
+    if(currentProjectDuration()+(dur)>MAX_SEC){alert('Project limit is 1 hour.');return}
+    pushHistory(); const c={id:uid(),mediaId:mid,track:m.type==='audio'?'Music':'Video 1',timelineStart:start,start:0,end:dur,speed:1,volume:1,zoom:1,panX:0,caption:'',showCaption:false};state.clips.push(c);state.selectedClipId=c.id;loadPreviewForClip(c);renderTimeline();renderInspector();saveProjectLocal();log('Added '+m.name+' to '+c.track);
+  }
+  function loadPreviewForClip(c){
+    const m=state.media.find(x=>x.id===c.mediaId);if(!m)return;
+    const v=$('preview'); if(m.type==='video'){v.src=m.url;v.currentTime=Math.min(c.start,c.end);v.playbackRate=c.speed||1;v.volume=Math.max(0,Math.min(1,c.volume||1));$('emptyStage').style.display='none';v.style.transform=`translateX(${(c.panX||0)/2}px) scale(${c.zoom||1})`; updateOverlay(c)}else{$('emptyStage').style.display='grid'}
+    $('scrub').max=Math.max(0,(c.end-c.start)/Math.max(.01,c.speed||1));$('scrub').value=0;updateTime();
+  }
+  function updateOverlay(c){const el=$('overlayText');if(c&&c.showCaption&&c.caption){el.textContent=c.caption;el.style.display='block'}else{el.style.display='none';el.textContent=''}}
+  function renderTimeline(){
+    const tracks=$('tracks');tracks.innerHTML='';const names=['Video 1','Video 2','Audio 1','Music','Captions'];
+    const scale=80; const maxT=Math.max(20,...state.clips.map(c=>(c.timelineStart||0)+(c.end-c.start)/Math.max(.01,c.speed||1)));
+    names.forEach(name=>{
+      const row=document.createElement('div');row.className='track';const label=document.createElement('div');label.className='track-label';label.textContent=name;const lane=document.createElement('div');lane.className='lane';lane.style.minWidth=(maxT*scale+40)+'px';
+      state.clips.filter(c=>c.track===name).forEach(c=>{const el=document.createElement('div');el.className='clip '+(name==='Music'?'audio':'')+(name==='Captions'?' caption':'')+(c.id===state.selectedClipId?' selected':'');el.style.left=((c.timelineStart||0)*scale)+'px';el.style.width=Math.max(48,((c.end-c.start)/Math.max(.01,c.speed||1))*scale)+'px';const m=state.media.find(x=>x.id===c.mediaId);el.textContent=(name==='Captions'?c.caption||'Caption':m?m.name:'Clip');el.onclick=()=>{state.selectedClipId=c.id;loadPreviewForClip(c);renderTimeline();renderInspector()};lane.appendChild(el)});
+      lane.ondragover=e=>e.preventDefault();lane.ondrop=e=>{const id=e.dataTransfer.getData('text/media-id');if(id)addClipToTimeline(id)};row.append(label,lane);tracks.appendChild(row);
+    });
+    renderRuler(maxT,scale);
+  }
+  function renderRuler(maxT,scale){$('ruler').innerHTML='';for(let t=0;t<=maxT;t+=1){const d=document.createElement('div');d.className='tick';d.style.width=scale+'px';d.textContent=fmtSec(t);$('ruler').appendChild(d)}}
+  function renderInspector(){
+    const c=state.clips.find(x=>x.id===state.selectedClipId); if(!c){$('selectedName').value='—';return}
+    const m=state.media.find(x=>x.id===c.mediaId);$('selectedName').value=m?m.name:'—';$('clipStart').value=c.start.toFixed(2);$('clipEnd').value=c.end.toFixed(2);$('speed').value=c.speed||1;$('speedVal').textContent=(c.speed||1).toFixed(2)+'x';$('volume').value=c.volume??1;$('volumeVal').textContent=Math.round((c.volume??1)*100)+'%';$('zoom').value=c.zoom||1;$('panX').value=c.panX||0;$('captionText').value=c.caption||'';$('showCaption').checked=!!c.showCaption;updateOverlay(c)
+  }
+  function mutateSelected(fn){const c=state.clips.find(x=>x.id===state.selectedClipId);if(!c)return;pushHistory();fn(c); if(c.end<c.start+.05)c.end=c.start+.05; const m=state.media.find(x=>x.id===c.mediaId);if(m)c.end=Math.min(c.end,m.duration||c.end);loadPreviewForClip(c);renderTimeline();renderInspector();saveProjectLocal()}
+  function splitSelected(){const c=state.clips.find(x=>x.id===state.selectedClipId);if(!c)return;const pos=c.start+($('preview').currentTime-(c.start||0));if(pos<=c.start+.05||pos>=c.end-.05)return;pushHistory();const c2={...c,id:uid(),start:pos,timelineStart:(c.timelineStart||0)+(pos-c.start)/c.speed};c.end=pos;state.clips.splice(state.clips.indexOf(c)+1,0,c2);state.selectedClipId=c2.id;renderAll();log('Split selected clip')}
+  function deleteSelected(){const i=state.clips.findIndex(c=>c.id===state.selectedClipId);if(i<0)return;pushHistory();state.clips.splice(i,1);state.selectedClipId=null;renderAll();log('Deleted clip')}
+  function duplicateSelected(){const c=state.clips.find(x=>x.id===state.selectedClipId);if(!c)return;pushHistory();const d={...c,id:uid(),timelineStart:(c.timelineStart||0)+(c.end-c.start)/c.speed+.2};state.clips.push(d);state.selectedClipId=d.id;renderAll();log('Duplicated clip')}
+  function updateTime(){const v=$('preview');$('timeText').textContent=`${fmtSec(v.currentTime)} / ${fmtSec(v.duration)}`;$('scrub').value=Number.isFinite(v.currentTime)?Math.max(0,Math.min(Number($('scrub').max)||0,v.currentTime-((state.clips.find(c=>c.id===state.selectedClipId)?.start)||0))):0}
+  function renderAll(){applyLanguage();renderMedia();renderTimeline();renderInspector();updateStorage();syncProjectInfo()}
+  function syncProjectInfo(){$('projectInfo').textContent=`${state.project.name} • ${state.project.resolution} • ${state.project.fps}fps`}
+  function escapeHtml(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+  function projectPayload(){return {project:state.project,media:state.media.map(m=>({id:m.id,name:m.name,type:m.type,size:m.size,duration:m.duration,width:m.width,height:m.height,fps:m.fps})),clips:state.clips,language:state.language,backendUrl:state.backendUrl,savedAt:new Date().toISOString()}}
+  function saveProjectLocal(){localStorage.setItem('ave_project',JSON.stringify(projectPayload()))}
+  function loadProjectLocal(){try{const p=JSON.parse(localStorage.getItem('ave_project')||'null');if(!p)return;state.clips=p.clips||[];state.project={...state.project,...(p.project||{})};state.backendUrl=p.backendUrl||state.backendUrl;state.language=p.language||state.language;renderAll();log('Loaded local project metadata')}catch(e){log('Local load failed: '+e.message)}}
+  async function runAI(){
+    const prompt=$('aiPrompt').value.trim();if(!prompt)return;setStatus('AI working…');$('aiOutput').textContent='Analyzing prompt…';log('AI prompt: '+prompt);
+    const url=(state.backendUrl||'').trim().replace(/\/$/,'');
+    if(url){
+      try{const r=await fetch(url+'/api/edit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,language:state.language,project:projectPayload()})});if(!r.ok)throw new Error('HTTP '+r.status);const data=await r.json();$('aiOutput').textContent=JSON.stringify(data,null,2).slice(0,4000);setStatus('AI plan received');log('Backend AI response received');return}catch(e){$('aiOutput').textContent='Backend request failed; using local command mode.\n'+e.message;log('Backend failed: '+e.message)}}
+    localAI(prompt);setStatus('AI plan applied • local frontend mode');
+  }
+  function localAI(prompt){
+    const p=prompt.toLowerCase();const notes=[];
+    const c=state.clips.find(x=>x.id===state.selectedClipId);
+    if(/sfx|sound effect|whoosh|साउंड|एसएफएक्स/.test(p))notes.push('SFX plan: subtle scene-change / emphasis SFX requested. Backend can place licensed assets.');
+    if(/caption|subtitle|subtitles|कैप्शन|सबटाइटल/.test(p)){notes.push('Caption plan: generate captions from speech and place them on Captions track.');if(c){pushHistory();c.caption=state.language==='hi'?'AI कैप्शन यहाँ आएगा':'AI captions go here';c.showCaption=true;renderAll()}}
+    if(/zoom|punch|cinematic|ज़ूम/.test(p)&&c){pushHistory();c.zoom=/subtle|कम/.test(p)?1.05:1.08;renderInspector();loadPreviewForClip(c);notes.push('Zoom plan: selected clip set to a gentle punch-in.');}
+    if(/fast|faster|speed|तेज|फास्ट/.test(p)&&c){pushHistory();c.speed=1.1;renderAll();notes.push('Pacing plan: selected clip slightly faster.');}
+    if(!notes.length)notes.push('Local mode understood the prompt, but heavy video analysis/rendering requires the configured backend.');
+    $('aiOutput').textContent=notes.join('\n');saveProjectLocal();
+  }
+  async function renderExport(){
+    const url=(state.backendUrl||'').trim().replace(/\/$/,'');
+    if(!url){$('aiOutput').textContent='Render requires a backend. Connect a persistent backend/Gradio server in Settings.';setStatus('Render blocked • backend not configured');return}
+    setStatus('Sending render job…');log('Render job submitted');
+    try{const r=await fetch(url+'/api/render',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({project:projectPayload()})});if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();$('aiOutput').textContent='Render job:\n'+JSON.stringify(d,null,2);setStatus('Render job submitted');}catch(e){setStatus('Render failed');$('aiOutput').textContent='Render request failed: '+e.message;log('Render failed: '+e.message)}
+  }
+  // events
+  $('importBtn').onclick=$('importHero').onclick=()=>$('fileInput').click();
+  $('fileInput').onchange=e=>Array.from(e.target.files||[]).forEach(addMedia);
+  document.querySelectorAll('.media-tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.media-tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');state.filter=b.dataset.tab;renderMedia()});
+  $('playBtn').onclick=()=>{$('preview').paused?$('preview').play():$('preview').pause()};
+  $('preview').onplay=()=>{$('playBtn').textContent='❚❚'};$('preview').onpause=()=>{$('playBtn').textContent='▶'};$('preview').ontimeupdate=updateTime;
+  $('backBtn').onclick=()=>{$('preview').currentTime=Math.max(0,$('preview').currentTime-5)};$('forwardBtn').onclick=()=>{$('preview').currentTime=Math.min($('preview').duration||0,$('preview').currentTime+5)};
+  $('scrub').oninput=()=>{const c=state.clips.find(x=>x.id===state.selectedClipId);if(c)$('preview').currentTime=Math.min(c.end,(c.start||0)+Number($('scrub').value))};
+  $('clipStart').onchange=e=>mutateSelected(c=>c.start=Math.max(0,Number(e.target.value)||0));
+  $('clipEnd').onchange=e=>mutateSelected(c=>c.end=Math.max(0,Number(e.target.value)||0));
+  $('speed').oninput=e=>mutateSelected(c=>{c.speed=Number(e.target.value);});$('speed').onchange=()=>{};
+  $('volume').oninput=e=>mutateSelected(c=>c.volume=Number(e.target.value));
+  $('zoom').oninput=e=>mutateSelected(c=>c.zoom=Number(e.target.value));$('panX').oninput=e=>mutateSelected(c=>c.panX=Number(e.target.value));
+  $('captionText').oninput=e=>mutateSelected(c=>c.caption=e.target.value);$('showCaption').onchange=e=>mutateSelected(c=>c.showCaption=e.target.checked);
+  $('splitBtn').onclick=splitSelected;$('deleteBtn').onclick=deleteSelected;$('dupBtn').onclick=duplicateSelected;$('undoBtn').onclick=()=>{if(!state.history.length)return;state.future.push(snapshot());restoreSnap(state.history.pop())};$('redoBtn').onclick=()=>{if(!state.future.length)return;state.history.push(snapshot());restoreSnap(state.future.pop())};
+  $('aiRun').onclick=runAI;$('renderBtn').onclick=renderExport;
+  $('fitBtn').onclick=()=>{$('preview').style.transform='scale(1)'};$('fullscreenBtn').onclick=()=>{$('stage').requestFullscreen?.()};
+  $('newBtn').onclick=()=>{if(confirm('Start a new project?')){pushHistory();state.media.forEach(m=>URL.revokeObjectURL(m.url));state.media=[];state.clips=[];state.selectedClipId=null;localStorage.removeItem('ave_project');renderAll();setStatus('New project');log('Created new project')}};
+  $('saveBtn').onclick=()=>{saveProjectLocal();setStatus('Saved locally');log('Saved project metadata locally')};$('loadBtn').onclick=loadProjectLocal;
+  $('settingsBtn').onclick=()=>{ $('backendUrl2').value=state.backendUrl;$('languageMode').value=state.language;$('logBox').textContent=(localStorage.getItem('ave_logs')||'').split('\n').slice(-100).join('\n');$('settingsModal').classList.add('open')};$('closeSettings').onclick=()=>$('settingsModal').classList.remove('open');
+  $('saveSettings').onclick=()=>{state.backendUrl=$('backendUrl2').value.trim();state.language=$('languageMode').value;localStorage.setItem('ave_backend',state.backendUrl);applyLanguage();$('settingsModal').classList.remove('open');renderAll();log('Settings saved')};$('clearLogs').onclick=()=>{localStorage.removeItem('ave_logs');$('logBox').textContent=''};
+  $('backendUrl').onchange=e=>{state.backendUrl=e.target.value.trim();localStorage.setItem('ave_backend',state.backendUrl)};
+  $('resolution').onchange=e=>{state.project.resolution=e.target.value;syncProjectInfo();saveProjectLocal()};$('fps').onchange=e=>{state.project.fps=Number(e.target.value);syncProjectInfo();saveProjectLocal()};$('quality').onchange=e=>{state.project.quality=e.target.value;saveProjectLocal()};
+  $('langEn').onclick=()=>{state.language='en';applyLanguage();renderAll()};$('langHi').onclick=()=>{state.language='hi';applyLanguage();renderAll()};
+  window.addEventListener('beforeunload',saveProjectLocal);
+  // initial
+  $('backendUrl').value=state.backendUrl; applyLanguage(); loadProjectLocal(); renderAll(); updateStorage(); syncProjectInfo(); log('AI Video Editor frontend ready');
+})();
+</script>
+</body>
+</html>
